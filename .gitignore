@@ -1,1 +1,3 @@
-.mypy_cache/
+  .mypy_cache/
+  .vscode/
+  blog/__pycache__/
