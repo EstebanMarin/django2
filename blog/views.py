@@ -3,6 +3,7 @@ from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.shortcuts import get_object_or_404, render
 from django.views.generic import ListView
 from taggit.models import Tag
+from django.db.models import Count
 
 from .forms import CommentForm, EmailPostForm
 from .models import Comment, Post
@@ -57,6 +58,10 @@ def post_detail(request, year, month, day, post):
     else:
         comment_form = CommentForm()
 
+    #  TODO Finish here List of similar posts
+    # post_tags_ids = post.tags
+    # print('This is the variable ', post_tags_ids)
+
     return render(
         request, 'blog/post/detail.html', {
             'post': post,
@@ -74,18 +79,20 @@ def post_list(request, tag_slug=None):
     if tag_slug:
         tag = get_object_or_404(Tag, slug=tag_slug)
         object_list = object_list.filter(tags__in=[tag])
+
+    paginator = Paginator(object_list, 3)  # 3 posts in each page
+    page = request.GET.get('page')
     try:
-        post = paginator.page(page)
+        posts = paginator.page(page)
     except PageNotAnInteger:
         # If page is not an integer deliver the first page
-        post = paginator.page(1)
+        posts = paginator.page(1)
     except EmptyPage:
-        # If page is out of range deliver last page results
-        post = paginator.page(paginator.num_pages)
-
+        # If page is out of range deliver last page of results
+        posts = paginator.page(paginator.num_pages)
     return render(request, 'blog/post/list.html', {
         'page': page,
-        'posts': post,
+        'posts': posts,
         'tag': tag
     })
 

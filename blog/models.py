@@ -4,7 +4,6 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from taggit.managers import TaggableManager
 
-
 class PublishedManager(models.Manager):
     def get_queryset(self):
         return super(PublishedManager,
